@@ -319,35 +319,44 @@ function loadExercise(index) {
     resetTimerDisplay(ex.duration);
   } else {
     setPhase(PHASE.CHECKOFF);
-    resetTimerDisplay(0);
+    updateCheckoffStatus();
   }
   updateRepStatus();
   renderExerciseList();
-  
-  // Apply dynamic font sizing to description
-  adjustDescriptionFontSize(document.getElementById('cardDescription'));
 }
 
 function applyExerciseModeUI(ex) {
-  const timerWrap = document.querySelector('.timer-wrap');
+  const timerWrap = document.getElementById('timerWrap');
+  const timerSection = document.querySelector('.timer-section');
   const durationRows = document.querySelector('.duration-rows');
   const checkoffPanel = document.getElementById('checkoffPanel');
-  if (!timerWrap || !durationRows || !checkoffPanel) return;
+  if (!timerWrap || !timerSection || !durationRows || !checkoffPanel) return;
 
   if (isTimerExercise(ex)) {
     timerWrap.classList.remove('hidden');
+    timerWrap.classList.remove('is-complete');
+    timerWrap.removeAttribute('role');
+    timerWrap.removeAttribute('tabindex');
+    timerWrap.removeAttribute('aria-pressed');
     durationRows.classList.remove('hidden');
     checkoffPanel.classList.add('hidden');
+    timerSection.classList.remove('checkoff-mode');
   } else {
-    timerWrap.classList.add('hidden');
+    timerWrap.classList.remove('hidden');
     durationRows.classList.add('hidden');
-    checkoffPanel.classList.remove('hidden');
+    checkoffPanel.classList.add('hidden');
+    timerWrap.setAttribute('role', 'button');
+    timerWrap.setAttribute('tabindex', '0');
+    timerSection.classList.add('checkoff-mode');
     updateCheckoffStatus();
   }
 }
 
 function updateCheckoffStatus() {
   const checkoffStatus = document.getElementById('checkoffStatus');
+  const timerWrap = document.getElementById('timerWrap');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const timerStatus = document.getElementById('timerStatus');
   if (!checkoffStatus || currentIndex < 0 || currentIndex >= exercises.length) return;
   const ex = exercises[currentIndex];
   if (isTimerExercise(ex)) return;
@@ -358,6 +367,14 @@ function updateCheckoffStatus() {
   }
 
   checkoffStatus.textContent = done ? 'Completed for today' : 'Not marked complete for today';
+  if (timerDisplay) timerDisplay.textContent = done ? 'Task Complete' : 'Task Incomplete';
+  if (timerStatus) timerStatus.textContent = done ? 'click to mark incomplete' : 'click to mark complete';
+  if (timerWrap) {
+    timerWrap.classList.toggle('is-complete', done);
+    timerWrap.setAttribute('aria-pressed', done ? 'true' : 'false');
+    timerWrap.setAttribute('aria-label', done ? 'Task complete. Activate to mark incomplete.' : 'Task incomplete. Activate to mark complete.');
+  }
+  updateTimerCircle(1, 1);
   if (phase === PHASE.CHECKOFF) {
     const startBtn = document.getElementById('startBtn');
     if (startBtn) startBtn.textContent = done ? 'Unmark Completion' : 'Mark Done Today';
@@ -369,10 +386,6 @@ function updateCheckoffStatus() {
 // ──────────────────────────────────────────────────────────
 function onWindowResize() {
   applySidebarWidth(sidebarWidth);
-  // Apply dynamic font sizing to description when window is resized
-  if (currentIndex >= 0) {
-    adjustDescriptionFontSize(document.getElementById('cardDescription'));
-  }
 }
 
 function syncRoutineProgress() {
@@ -461,12 +474,19 @@ function markCurrentExerciseDoneToday() {
   setPhase(PHASE.CHECKOFF);
 }
 
+function toggleCheckoffViaRing() {
+  if (phase !== PHASE.CHECKOFF || currentIndex < 0 || currentIndex >= exercises.length) return;
+  const ex = exercises[currentIndex];
+  if (isTimerExercise(ex)) return;
+  markCurrentExerciseDoneToday();
+}
+
 // ──────────────────────────────────────────────────────────
 // PHASE — controls button visibility & timer ring colour
 // ──────────────────────────────────────────────────────────
 function setPhase(newPhase) {
   phase = newPhase;
-  const wrap      = document.querySelector('.timer-wrap');
+  const wrap      = document.getElementById('timerWrap');
   const startBtn  = document.getElementById('startBtn');
   const stopBtn   = document.getElementById('stopBtn');
   const nextBtn   = document.getElementById('nextBtn');
@@ -474,7 +494,7 @@ function setPhase(newPhase) {
   const liInput   = document.getElementById('leadInInput');
   const status    = document.getElementById('timerStatus');
 
-  wrap.classList.remove('timer-leadin', 'timer-running', 'timer-paused', 'timer-done');
+  wrap.classList.remove('timer-leadin', 'timer-running', 'timer-paused', 'timer-done', 'timer-checkoff');
 
   switch (phase) {
     case PHASE.STOPPED:
@@ -517,12 +537,13 @@ function setPhase(newPhase) {
       break;
 
     case PHASE.CHECKOFF:
-      startBtn.classList.remove('hidden');
+      startBtn.classList.add('hidden');
       stopBtn.classList.add('hidden');
       nextBtn.classList.remove('hidden');
       durInput.disabled = true;
       liInput.disabled  = true;
-      status.textContent = 'calendar check-off';
+      wrap.classList.add('timer-checkoff');
+      status.textContent = 'click to toggle';
       break;
 
     default:
@@ -621,7 +642,7 @@ function stopSequence() {
   const ex = exercises[currentIndex];
   if (ex && !isTimerExercise(ex)) {
     setPhase(PHASE.CHECKOFF);
-    resetTimerDisplay(0);
+    updateCheckoffStatus();
   } else {
     setPhase(PHASE.STOPPED);
     resetTimerDisplay(ex ? ex.duration : 60);
@@ -972,6 +993,16 @@ function bindEvents() {
   document.getElementById('startBtn').addEventListener('click', startSequence);
   document.getElementById('stopBtn').addEventListener('click',  stopSequence);
   document.getElementById('nextBtn').addEventListener('click',  advanceExercise);
+  const timerWrap = document.getElementById('timerWrap');
+  if (timerWrap) {
+    timerWrap.addEventListener('click', toggleCheckoffViaRing);
+    timerWrap.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleCheckoffViaRing();
+      }
+    });
+  }
 
   // Duration inputs
   document.getElementById('durationInput').addEventListener('change', onDurationChange);
@@ -1040,7 +1071,7 @@ function bindEvents() {
     });
   });
 
-  // Window resize handler for dynamic text sizing
+  // Window resize handler
   window.addEventListener('resize', onWindowResize);
 
   // Keyboard shortcuts
@@ -1056,23 +1087,3 @@ function bindEvents() {
   });
 }
 
-// Dynamic font sizing function based on character count
-function adjustDescriptionFontSize(descriptionElement) {
-  const text = descriptionElement.textContent || descriptionElement.innerText;
-  const length = text.length;
-  
-  let fontSize;
-  
-  if (length < 200) {
-    fontSize = '1.22rem';
-  } else if (length >= 200 && length < 400) {
-    fontSize = '1.12rem';
-  } else if (length >= 400 && length < 700) {
-    fontSize = '1.02rem';
-  } else {
-    fontSize = '0.95rem';
-  }
-  
-  // Apply the font size directly to the element's inline style
-  descriptionElement.style.fontSize = fontSize;
-}

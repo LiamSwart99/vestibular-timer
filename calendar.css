@@ -1,145 +1,177 @@
+/* ============================================================
+   calendar.css — Compact Calendar (Notion-style cells)
+   Layout: 2-column (grid left, detail right) — zero scroll
+   ============================================================ */
+
+/* ---- Panel Shell ---- */
 .calendar-panel {
-  width: min(1160px, 100%);
+  width: 100%;
   height: 100%;
-  min-height: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  border: 1px solid #e4e9e5;
-  box-shadow: var(--shadow-md);
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-rows: auto minmax(0, auto) minmax(0, 1fr);
+  grid-template-areas:
+    "header     header"
+    "cal-grid   detail-top"
+    "cal-grid   detail-bot";
+  background: #fefcf8;
+  border-radius: 24px;
+  border: 1px solid #dfe8e1;
+  box-shadow: 0 14px 38px rgba(28, 46, 38, 0.1);
   overflow: hidden;
 }
 
+/* ============================================================
+   HEADER
+   ============================================================ */
 .calendar-header {
+  grid-area: header;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: clamp(10px, 1vw + 0.2vh, 16px) clamp(12px, 1.6vw, 18px);
-  border-bottom: 1px solid var(--border);
-  background: linear-gradient(145deg, #edf3f1 0%, #f8f7f4 100%);
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(140deg, #edf5ef 0%, #f9f8f4 100%);
+  border-bottom: 1px solid #dfe8e2;
 }
 
 .calendar-header-left {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 12px;
 }
 
 .calendar-header-right {
-  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .calendar-title {
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 0.84rem + 0.42vw, 1.28rem);
-  font-weight: 650;
+  font-family: 'Jost', var(--font-body);
+  font-size: clamp(0.95rem, 0.82rem + 0.32vw, 1.15rem);
+  font-weight: 500;
   color: var(--slate-900);
+  letter-spacing: -0.01em;
 }
 
 .calendar-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
+  gap: 4px;
+  align-items: center;
 }
 
 .calendar-btn {
-  border: 1px solid #d5ddd8;
-  border-radius: 10px;
-  padding: 6px 11px;
+  border: 1.5px solid #cddbd1;
+  border-radius: 999px;
+  padding: 4px 12px;
   background: #fff;
   color: var(--slate-700);
   font-family: var(--font-body);
-  font-size: clamp(0.72rem, 0.66rem + 0.14vw, 0.8rem);
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    transform var(--transition);
+  white-space: nowrap;
 }
 
 .calendar-btn:hover {
-  background: var(--stone-50);
-  border-color: #c8d2cc;
+  background: #f2f8f4;
+  border-color: #aac9bb;
   color: var(--slate-900);
+  transform: translateY(-1px);
 }
 
 .calendar-close-btn {
   background: var(--teal-500);
   color: #fff;
   border-color: transparent;
-  padding: 6px 14px;
+  box-shadow: 0 3px 10px rgba(95, 141, 130, 0.26);
 }
 
 .calendar-close-btn:hover {
   background: var(--teal-600);
   color: #fff;
+  border-color: transparent;
 }
 
 .calendar-back-btn {
-  align-self: flex-start;
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  color: var(--slate-500);
+  border-color: #d8e2da;
 }
 
+/* ============================================================
+   LEFT COLUMN — Compact Calendar Grid
+   ============================================================ */
 .calendar-grid {
-  min-height: 0;
-  padding: clamp(8px, 0.9vw, 14px) clamp(10px, 1vw, 16px);
+  grid-area: cal-grid;
+  padding: 16px 20px 20px;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  /* rows grow to fill available height equally */
   grid-auto-rows: 1fr;
-  gap: clamp(5px, 0.55vw, 9px);
+  gap: 5px;
   overflow: hidden;
+  border-right: 1px solid #e4ede6;
+  background: #fefcf8;
 }
 
+/* ---- Compact Day Cell ---- */
 .calendar-day {
-  min-height: clamp(68px, 9.2vh, 134px);
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 3px;
-  padding: clamp(5px, 0.45vw + 0.28vh, 9px);
-  border-radius: 12px;
-  border: 1px solid transparent;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 2px 5px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
   cursor: pointer;
-  position: relative;
-  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  background: transparent;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+  /* No min-height — let the grid rows dictate the size */
+  min-height: 0;
 }
 
 .calendar-day:hover {
-  background: var(--stone-50);
-  border-color: #d5ddd8;
+  background: #eaf4ed;
+  border-color: #b8d4c4;
 }
 
 .calendar-day.today {
-  border-color: #95b3ab;
+  background: #eef7f3;
+  border-color: #88bbaf;
+}
+
+.calendar-day.today .calendar-badge {
+  color: var(--teal-600);
+  font-weight: 700;
 }
 
 .calendar-day.selected {
+  background: #e4f2ec;
   border-color: var(--teal-600);
-  box-shadow: inset 0 0 0 1px rgba(95, 141, 130, 0.28);
+  box-shadow: 0 0 0 2px rgba(95, 141, 130, 0.18);
 }
 
-.calendar-day.status-green {
-  background: #e9f2ed;
-  border-color: #9fb8af;
-}
+/* Status tints — pastel, subtle */
+.calendar-day.status-green  { background: #edf7f2; border-color: #a8ccba; }
+.calendar-day.status-yellow { background: #fdf7e3; border-color: #d9c57e; }
+.calendar-day.status-red    { background: #fdf1ee; border-color: #e0b0a8; }
 
-.calendar-day.status-yellow {
-  background: #f6f0de;
-  border-color: #d3bd86;
-}
-
-.calendar-day.status-red {
-  background: #f6e8e4;
-  border-color: #d3a197;
-}
+.calendar-day.status-green:hover  { background: #e1f2ea; }
+.calendar-day.status-yellow:hover { background: #f8f0d4; }
+.calendar-day.status-red:hover    { background: #f7e7e3; }
 
 .calendar-day.empty {
   background: transparent;
@@ -149,48 +181,57 @@
 
 .calendar-day.empty:hover {
   background: transparent;
+  border-color: transparent;
+  transform: none;
 }
 
+/* ---- Date Number ---- */
 .calendar-badge {
-  font-family: var(--font-display);
-  font-size: clamp(0.68rem, 0.6rem + 0.2vw, 0.82rem);
-  font-weight: 600;
-  color: var(--slate-900);
+  font-family: 'Jost', var(--font-body);
+  font-size: clamp(0.68rem, 0.55rem + 0.3vw, 0.9rem);
+  font-weight: 400;
+  color: var(--slate-700);
+  line-height: 1;
 }
 
+/* ---- Thin progress bar — no label ---- */
 .calendar-progress {
-  margin-top: auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  width: 68%;
 }
 
 .progress-bar {
   width: 100%;
-  height: clamp(4px, 0.4vw, 6px);
+  height: 3px;
   border-radius: 999px;
-  background: #e0e5e1;
+  background: #d4e2da;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: var(--teal-600);
-  transition: width 0.25s ease;
+  background: linear-gradient(90deg, var(--teal-500), var(--teal-600));
+  border-radius: 999px;
+  transition: width 0.3s ease;
 }
 
+/* Label hidden — bar is sufficient at compact size */
 .progress-label {
-  text-align: center;
-  font-size: clamp(0.56rem, 0.5rem + 0.16vw, 0.66rem);
-  color: var(--slate-500);
-  line-height: 1.1;
+  display: none;
 }
 
+/* ============================================================
+   RIGHT COLUMN — Stats (fixed) + Exercises (scrollable)
+   ============================================================ */
+
+/* Stats panel — compact, sits at top of right column */
 .calendar-stats {
-  border-top: 1px solid var(--border);
-  background: #fbfcfb;
-  padding: clamp(10px, 0.9vw, 14px) clamp(12px, 1vw, 16px);
+  grid-area: detail-top;
+  padding: 14px 18px 10px;
+  background: #f6faf7;
+  border-bottom: 1px solid #e2ece5;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .stat-row {
@@ -198,58 +239,70 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 4px 0;
-  border-bottom: 1px dashed #e1e6e2;
+  padding: 5px 0;
+  border-bottom: 1px dashed #dce8de;
 }
 
-.stat-row:last-child {
-  border-bottom: none;
-}
+.stat-row:last-child { border-bottom: none; }
 
 .stat-label {
-  font-size: clamp(0.62rem, 0.58rem + 0.1vw, 0.7rem);
+  font-size: 0.58rem;
   color: var(--slate-500);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
 }
 
 .stat-value {
-  font-size: clamp(0.75rem, 0.68rem + 0.2vw, 0.9rem);
-  font-weight: 650;
+  font-family: 'Jost', var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--slate-900);
 }
 
+/* Exercise list — scrolls internally, never pushes layout */
 .exercise-rows {
-  padding: clamp(8px, 0.8vw, 12px) clamp(10px, 1vw, 16px) clamp(10px, 0.9vw, 14px);
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(6px, 0.8vw, 10px);
+  grid-area: detail-bot;
+  padding: 10px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  background: #fefcf8;
+  scrollbar-width: thin;
+  scrollbar-color: #ccddd2 transparent;
 }
 
+.exercise-rows::-webkit-scrollbar { width: 4px; }
+.exercise-rows::-webkit-scrollbar-track { background: transparent; }
+.exercise-rows::-webkit-scrollbar-thumb { background: #ccddd2; border-radius: 999px; }
+
+/* ---- Exercise Row ---- */
 .exercise-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
-  background: #f7f9f8;
-  border: 1px solid #e1e8e3;
+  background: #f2f8f4;
+  border: 1.5px solid #d8e8de;
   border-radius: 12px;
-  padding: 8px 9px;
+  padding: 8px 10px;
+  flex-shrink: 0;
   transition: border-color var(--transition), background var(--transition);
 }
 
-.exercise-row.done {
-  background: #eaf3ef;
-  border-color: #abc4bc;
+.exercise-row:hover {
+  border-color: #b0cfc2;
+  background: #eaf5ef;
 }
 
-.exercise-info {
-  flex: 1;
-  min-width: 0;
+.exercise-row.done {
+  background: #e4f4ec;
+  border-color: #96c8b2;
 }
+
+.exercise-info { flex: 1; min-width: 0; }
 
 .exercise-name {
-  font-size: clamp(0.72rem, 0.66rem + 0.16vw, 0.84rem);
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--slate-900);
   white-space: nowrap;
@@ -259,14 +312,14 @@
 
 .exercise-meta {
   margin-top: 2px;
-  font-size: clamp(0.6rem, 0.55rem + 0.12vw, 0.68rem);
+  font-size: 0.6rem;
   color: var(--slate-500);
 }
 
 .exercise-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -274,128 +327,94 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  border: 1px solid #d8dfda;
-  border-radius: 10px;
-  padding: 3px 6px;
+  border: 1.5px solid #ccddd2;
+  border-radius: 999px;
+  padding: 3px 8px;
   background: #fff;
 }
 
 .counter-label {
-  font-size: 0.56rem;
-  letter-spacing: 0.08em;
+  font-size: 0.5rem;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--slate-500);
 }
 
 .rep-count {
-  min-width: 24px;
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: clamp(0.68rem, 0.62rem + 0.14vw, 0.78rem);
-  font-weight: 650;
+  font-family: 'Jost', var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
   color: var(--slate-900);
 }
 
 .complete-toggle {
-  border: 1px solid #d4ddd7;
+  border: 1.5px solid #c2d8ca;
   border-radius: 999px;
   background: #fff;
   color: var(--slate-700);
-  padding: 5px 9px;
+  padding: 4px 9px;
   font-family: var(--font-body);
-  font-size: clamp(0.63rem, 0.58rem + 0.12vw, 0.72rem);
+  font-size: 0.62rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+  white-space: nowrap;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
 }
 
 .complete-toggle:hover {
   transform: translateY(-1px);
-  border-color: #c4cfc9;
+  border-color: #9abfb0;
+  background: #edf6f1;
 }
 
 .complete-toggle.is-done {
   background: var(--teal-600);
   color: #fff;
   border-color: var(--teal-600);
+  box-shadow: 0 2px 8px rgba(95, 141, 130, 0.26);
 }
 
-@media (max-width: 1100px) {
-  .exercise-rows {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .calendar-day {
-    min-height: clamp(62px, 8.6vh, 118px);
-  }
-}
-
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 860px) {
-  .calendar-header-left,
-  .calendar-header-right {
-    width: 100%;
-  }
-
-  .calendar-header-right {
-    justify-content: space-between;
-  }
-
-  .calendar-nav {
-    justify-content: flex-start;
-  }
-
-  .calendar-close-btn {
-    margin-left: auto;
-  }
-
-  .calendar-grid {
-    gap: 6px;
-  }
-
-  .calendar-day {
-    min-height: clamp(58px, 8vh, 106px);
-    padding: 6px;
-  }
-}
-
-@media (max-width: 760px) {
   .calendar-panel {
-    border-radius: 14px;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas:
+      "header"
+      "cal-grid"
+      "detail-top"
+      "detail-bot";
   }
 
   .calendar-grid {
-    padding: 8px;
-    gap: 5px;
+    border-right: none;
+    border-bottom: 1px solid #e4ede6;
+    /* On mobile the grid is no longer spanning 2 rows,
+       so let cells use a fixed aspect-ratio instead */
+    grid-auto-rows: auto;
   }
 
   .calendar-day {
-    min-height: clamp(52px, 8.3vh, 88px);
-  }
-
-  .progress-label {
-    font-size: 0.55rem;
-  }
-
-  .exercise-rows {
-    grid-template-columns: 1fr;
-    padding: 8px;
+    aspect-ratio: 1 / 1.1;
   }
 }
 
-@media (max-height: 760px) {
-  .calendar-grid {
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
+@media (max-width: 560px) {
+  .calendar-panel { border-radius: 16px; }
+  .calendar-header { padding: 10px 14px; }
+  .calendar-grid   { padding: 10px 12px; gap: 3px; }
+  .calendar-day    { border-radius: 8px; padding: 4px 2px; }
+  .calendar-badge  { font-size: 0.62rem; }
+}
 
-  .calendar-day {
-    min-height: clamp(46px, 7.8vh, 74px);
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .calendar-progress {
-    gap: 3px;
-  }
+@media (max-height: 640px) {
+  .calendar-header { padding: 8px 16px; }
+  .calendar-grid   { padding: 10px 14px; gap: 4px; }
+  .stat-row        { padding: 3px 0; }
 }

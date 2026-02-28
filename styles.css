@@ -168,6 +168,25 @@ body.is-resizing-sidebar * {
 
 .sidebar-font-control {
   margin-top: 12px;
+  max-height: 1.65rem;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 4px 6px;
+  transition: max-height var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.sidebar-font-control:hover,
+.sidebar-font-control:focus-within {
+  max-height: 5.8rem;
+  background: #f6f8f7;
+  border-color: #dde4df;
+}
+
+.sidebar-font-control:hover .sidebar-font-row,
+.sidebar-font-control:focus-within .sidebar-font-row {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .sidebar-font-label,
@@ -179,11 +198,19 @@ body.is-resizing-sidebar * {
   text-transform: uppercase;
 }
 
+.sidebar-font-label {
+  display: block;
+  line-height: 1.05rem;
+}
+
 .sidebar-font-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 6px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--transition), transform var(--transition);
 }
 
 .menu-font-slider {
@@ -580,6 +607,12 @@ body.is-resizing-sidebar * {
   position: relative;
 }
 
+.timer-wrap:focus-visible {
+  outline: 2px solid rgba(95, 141, 130, 0.7);
+  outline-offset: 6px;
+  border-radius: 50%;
+}
+
 .timer-svg {
   width: 100%;
   height: 100%;
@@ -622,6 +655,43 @@ body.is-resizing-sidebar * {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--slate-500);
+}
+
+.timer-section.checkoff-mode .duration-rows {
+  display: none;
+}
+
+.timer-wrap.timer-checkoff {
+  cursor: pointer;
+  transition: transform var(--transition), filter var(--transition);
+}
+
+.timer-wrap.timer-checkoff:hover {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.timer-wrap.timer-checkoff .timer-progress {
+  stroke: #b3c8c1;
+  stroke-dashoffset: 0 !important;
+  transition: stroke var(--transition);
+}
+
+.timer-wrap.timer-checkoff.is-complete .timer-progress {
+  stroke: var(--teal-600);
+}
+
+.timer-wrap.timer-checkoff .timer-display {
+  max-width: 9ch;
+  font-size: clamp(1rem, 0.78rem + 0.6vw, 1.36rem);
+  line-height: 1.2;
+  letter-spacing: 0;
+  white-space: normal;
+}
+
+.timer-wrap.timer-checkoff .timer-status {
+  margin-top: 8px;
+  font-size: clamp(0.56rem, 0.5rem + 0.18vw, 0.68rem);
+  letter-spacing: 0.08em;
 }
 
 .rep-status {
@@ -1142,5 +1212,15 @@ body.is-resizing-sidebar * {
   }
 }
 
+@media (hover: none) {
+  .sidebar-font-control {
+    max-height: 5.8rem;
+    background: #f6f8f7;
+    border-color: #dde4df;
+  }
 
-
+  .sidebar-font-row {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
