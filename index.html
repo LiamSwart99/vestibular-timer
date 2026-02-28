@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wellness Exercise Timer</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="calendar.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand-logo" src="assets/app-logo.png" alt="App logo">
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" id="calendarToggleBtn" title="Open Calendar">📅 Calendar</button>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="app-layout">
+
+    <!-- SIDEBAR: Exercise Queue -->
+    <aside class="sidebar" id="exerciseSidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Exercises</h2>
+        <span class="sidebar-subtitle">drag to reorder</span>
+        <div class="sidebar-font-control">
+          <label class="sidebar-font-label" for="menuFontSizeSlider">Menu text size</label>
+          <div class="sidebar-font-row">
+            <span class="font-size-mark">A-</span>
+            <input type="range" id="menuFontSizeSlider" class="menu-font-slider" min="12" max="19" step="1" value="14">
+            <span class="font-size-mark">A+</span>
+            <span class="menu-font-size-value" id="menuFontSizeValue">14px</span>
+          </div>
+        </div>
+      </div>
+      <ul class="exercise-list" id="exerciseList">
+        <!-- Populated by JS -->
+      </ul>
+      <button class="add-btn" id="addExerciseBtn">
+        <span class="add-icon">+</span> Add Exercise
+      </button>
+    </aside>
+    <div class="sidebar-resizer" id="sidebarResizer" title="Resize exercise panel" aria-hidden="true"></div>
+
+    <!-- MAIN PANEL -->
+    <main class="main-panel">
+
+      <!-- IDLE STATE -->
+      <div class="idle-state" id="idleState">
+        <div class="idle-illustration">✦</div>
+        <p class="idle-text">Select an exercise from the list<br>or press <strong>Begin Session</strong> to start from the first</p>
+        <button class="begin-btn" id="beginSessionBtn">Begin Session</button>
+      </div>
+
+      <!-- CALENDAR STATE -->
+      <div class="calendar-state hidden" id="calendarState">
+        <div class="calendar-panel">
+          <div class="calendar-header">
+            <div class="calendar-header-left">
+              <div class="calendar-title" id="calendarMonthYear">Month Year</div>
+              <button class="calendar-btn calendar-back-btn" id="backToExercisesBtn">Back to exercises</button>
+            </div>
+            <div class="calendar-header-right">
+              <div class="calendar-nav">
+                <button class="calendar-btn" id="prevMonth">‹ Prev</button>
+                <button class="calendar-btn" id="todayBtn">Today</button>
+                <button class="calendar-btn" id="nextMonth">Next ›</button>
+              </div>
+              <button class="calendar-btn calendar-close-btn" id="closeCalendarBtn">Close</button>
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendarDays">
+            <!-- Days populated by JS -->
+          </div>
+          <div class="calendar-stats" id="calendarStats">
+            <!-- Stats populated by JS -->
+          </div>
+          <div class="exercise-rows" id="exerciseRows">
+            <!-- Exercise rows populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE EXERCISE STATE -->
+      <div class="active-state hidden" id="activeState">
+
+        <!-- Exercise Card -->
+        <div class="exercise-card" id="exerciseCard">
+          <div class="card-header">
+            <div class="card-number" id="cardNumber">01</div>
+            <div class="card-title-group">
+              <h1 class="card-title" id="cardTitle">Exercise Name</h1>
+              <span class="card-progress" id="cardProgress">1 of 7</span>
+            </div>
+            <button class="card-edit-btn" id="cardEditBtn" title="Edit exercise">✎</button>
+          </div>
+          <div class="card-body">
+            <div class="card-description" id="cardDescription">
+              <!-- Description text here -->
+            </div>
+            <div class="card-image-wrap" id="cardImageWrap" style="display:none;">
+              <img id="cardImage" src="" alt="Exercise reference" class="card-image">
+            </div>
+          </div>
+        </div>
+
+        <!-- Timer Section -->
+        <div class="timer-section">
+          <div class="timer-wrap">
+            <div class="leadin-badge">Get Ready</div>
+            <svg class="timer-svg" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+              <circle class="timer-track" cx="110" cy="110" r="90"/>
+              <circle class="timer-progress" id="timerProgress" cx="110" cy="110" r="90"
+                stroke-dasharray="565.49"
+                stroke-dashoffset="0"
+                transform="rotate(-90 110 110)"/>
+            </svg>
+            <div class="timer-inner">
+              <div class="timer-display" id="timerDisplay">1:00</div>
+              <div class="timer-status" id="timerStatus">ready</div>
+              <div class="rep-status hidden" id="repStatus">Rep 1 / 1</div>
+            </div>
+          </div>
+          <div class="checkoff-panel hidden" id="checkoffPanel">
+            <div class="checkoff-icon">☑</div>
+            <div class="checkoff-title">Daily Checkoff</div>
+            <div class="checkoff-sub" id="checkoffStatus">Not marked complete for today</div>
+          </div>
+
+          <div class="timer-controls">
+            <div class="duration-rows">
+              <div class="duration-control">
+                <label class="duration-label">Exercise</label>
+                <div class="duration-input-wrap">
+                  <input type="number" class="duration-input" id="durationInput" min="5" max="3600" value="60">
+                  <span class="duration-unit">sec</span>
+                </div>
+              </div>
+              <div class="duration-control">
+                <label class="duration-label">Lead-in</label>
+                <div class="duration-input-wrap">
+                  <input type="number" class="duration-input" id="leadInInput" min="0" max="60" value="5">
+                  <span class="duration-unit">sec</span>
+                </div>
+              </div>
+            </div>
+            <div class="control-buttons">
+              <button class="ctrl-btn start-btn" id="startBtn">▶ Start</button>
+              <button class="ctrl-btn stop-btn hidden" id="stopBtn">■ Stop</button>
+              <button class="ctrl-btn next-btn hidden" id="nextBtn">Next Exercise ›</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- EDIT EXERCISE MODAL -->
+  <div class="modal-overlay hidden" id="editModal">
+    <div class="modal modal--exercise">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Exercise</h3>
+        <button class="modal-close" id="editModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="exercise-form-grid">
+          <div class="field-group field-group-span-2">
+            <label class="field-label">Exercise Name</label>
+            <input type="text" class="field-input" id="editName">
+          </div>
+          <div class="field-group field-group-span-2">
+            <label class="field-label">Description</label>
+            <textarea class="field-textarea" id="editDescription" rows="4"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Duration (seconds)</label>
+            <input type="number" class="field-input" id="editDuration" min="5" max="3600">
+          </div>
+          <div class="field-group field-group-checkbox">
+            <label class="field-checkbox">
+              <input type="checkbox" id="editUseTimer" checked>
+              <span>Use Timer For This Exercise</span>
+            </label>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Reps Per Session</label>
+            <input type="number" class="field-input" id="editReps" min="1" value="1">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Sets (Sessions Per Day)</label>
+            <input type="number" class="field-input" id="editSets" min="1" value="1">
+          </div>
+          <div class="field-group field-group-span-2">
+            <label class="field-label">Reference Image (optional)</label>
+            <div class="image-upload-area" id="editImageArea">
+              <img id="editImagePreview" class="upload-preview hidden" alt="Preview">
+              <span class="upload-hint" id="editImageHint">Click to upload an image</span>
+              <button class="upload-btn" id="editImageBtn">Choose Image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn danger" id="editDeleteBtn">Delete Exercise</button>
+        <button class="modal-btn secondary" id="editCancelBtn">Cancel</button>
+        <button class="modal-btn primary" id="editSaveBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD EXERCISE MODAL -->
+  <div class="modal-overlay hidden" id="addModal">
+    <div class="modal modal--exercise">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Exercise</h3>
+        <button class="modal-close" id="addModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="exercise-form-grid">
+          <div class="field-group field-group-span-2">
+            <label class="field-label">Exercise Name</label>
+            <input type="text" class="field-input" id="addName" placeholder="e.g. Balance Walk">
+          </div>
+          <div class="field-group field-group-span-2">
+            <label class="field-label">Description</label>
+            <textarea class="field-textarea" id="addDescription" rows="4" placeholder="Describe the exercise steps..."></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Duration (seconds)</label>
+            <input type="number" class="field-input" id="addDuration" min="5" max="3600" value="60">
+          </div>
+          <div class="field-group field-group-checkbox">
+            <label class="field-checkbox">
+              <input type="checkbox" id="addUseTimer" checked>
+              <span>Use Timer For This Exercise</span>
+            </label>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Reps Per Session</label>
+            <input type="number" class="field-input" id="addReps" min="1" value="1">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Sets (Sessions Per Day)</label>
+            <input type="number" class="field-input" id="addSets" min="1" value="1">
+          </div>
+          <div class="field-group field-group-span-2">
+            <label class="field-label">Reference Image (optional)</label>
+            <div class="image-upload-area" id="addImageArea">
+              <img id="addImagePreview" class="upload-preview hidden" alt="Preview">
+              <span class="upload-hint" id="addImageHint">Click to upload a JPEG or PNG</span>
+              <button class="upload-btn" id="addImageBtn">Choose Image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" id="addCancelBtn">Cancel</button>
+        <button class="modal-btn primary" id="addSaveBtn">Add to Deck</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SESSION COMPLETE -->
+  <div class="modal-overlay hidden" id="completeModal">
+    <div class="modal modal--complete">
+      <div class="complete-icon">✦</div>
+      <h3 class="complete-title">Session Complete</h3>
+      <p class="complete-sub">Well done! All exercises finished.</p>
+      <button class="modal-btn primary" id="completeDoneBtn">Done</button>
+    </div>
+  </div>
+
+  <script src="calendar.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

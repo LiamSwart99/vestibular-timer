@@ -1,0 +1,322 @@
+/* ─────────────────────────────────────────
+   Calendar Styles
+───────────────────────────────────────── */
+.calendar-panel {
+  width: 100%;
+  max-width: 1160px;
+  max-height: 100%;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px var(--shadow);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cream-deep);
+  background: linear-gradient(135deg, var(--lavender-light) 0%, var(--cream) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.calendar-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calendar-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  flex: 1;
+  gap: 12px;
+}
+
+.calendar-close-btn {
+  background: var(--lavender);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 8px;
+}
+
+.calendar-back-btn {
+  font-size: 12px;
+  padding: 4px 12px;
+  align-self: flex-start;
+}
+
+.calendar-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--brown);
+}
+
+.calendar-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.calendar-btn {
+  background: var(--white);
+  border: 1px solid var(--cream-deep);
+  color: var(--brown);
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.calendar-btn:hover { background: var(--cream); }
+
+.calendar-grid {
+  padding: 8px 12px 6px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background var(--transition);
+  position: relative;
+}
+
+.calendar-day:hover { background: var(--cream); }
+.calendar-day.today { box-shadow: inset 0 0 0 1px var(--lavender-dark); }
+.calendar-day.selected { outline: 2px solid var(--lavender-dark); outline-offset: -2px; }
+.calendar-day.status-green { background: #e6f4e8; border: 1px solid #7a9e80; }
+.calendar-day.status-yellow { background: #fff8dd; border: 1px solid #d7b56d; }
+.calendar-day.status-red { background: #fde8e6; border: 1px solid #d9956a; }
+
+.calendar-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--brown);
+  margin-bottom: 2px;
+}
+
+.calendar-progress {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--cream-deep);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--lavender-dark);
+  transition: width 0.3s ease;
+}
+
+.progress-label {
+  font-size: 8px;
+  color: var(--brown-light);
+  text-align: center;
+}
+
+.calendar-stats {
+  padding: 8px 12px;
+  border-top: 1px solid var(--cream-deep);
+  background: var(--white);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--cream-deep);
+}
+.stat-row:last-child { border-bottom: none; }
+
+.stat-label {
+  font-size: 11px;
+  color: var(--brown-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 12px;
+  color: var(--brown);
+  font-weight: 500;
+}
+
+.exercise-rows {
+  padding: 8px 12px 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  max-height: none;
+  overflow: visible;
+}
+
+.exercise-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--cream);
+  transition: background var(--transition);
+}
+.exercise-row.done { background: var(--sage-light); border-left: 3px solid var(--sage-dark); }
+
+.exercise-info {
+  flex: 1;
+}
+
+.exercise-name {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--brown);
+}
+
+.exercise-meta {
+  font-size: 10px;
+  color: var(--brown-light);
+  margin-top: 2px;
+}
+
+.exercise-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.counter-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 8px;
+  background: var(--white);
+  border: 1px solid var(--cream-deep);
+}
+
+.complete-toggle {
+  border: 1px solid var(--cream-deep);
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: var(--white);
+  color: var(--brown);
+  font-family: var(--font-body);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.complete-toggle.is-done {
+  background: var(--sage-dark);
+  border-color: var(--sage-dark);
+  color: var(--white);
+}
+
+.complete-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.counter-label {
+  font-size: 9px;
+  color: var(--brown-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rep-count {
+  min-width: 24px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--brown);
+}
+
+/* Empty state */
+.calendar-day.empty {
+  background: transparent;
+  cursor: default;
+}
+.calendar-day.empty:hover { background: transparent; }
+
+@media (max-width: 820px) {
+  .calendar-header-left,
+  .calendar-header-right {
+    width: 100%;
+  }
+
+  .calendar-header-right {
+    justify-content: space-between;
+  }
+
+  .calendar-nav {
+    justify-content: flex-start;
+  }
+
+  .calendar-close-btn {
+    margin-left: auto;
+  }
+
+  .exercise-rows {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .exercise-rows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-height: 900px) {
+  .calendar-header {
+    padding: 12px 14px;
+  }
+
+  .calendar-grid {
+    padding: 10px 12px;
+    gap: 5px;
+  }
+
+  .calendar-day {
+    aspect-ratio: 1 / 1;
+  }
+
+  .calendar-stats {
+    padding: 10px 14px;
+  }
+
+  .exercise-rows {
+    padding: 10px 12px 12px;
+    gap: 6px;
+  }
+}
